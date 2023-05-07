@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Customer Details</h1>
+  <table>
+    <tbody>
+      <tr>
+        <td><strong>Username</strong></td>
+        <td>{{ customer.user.username }}</td>
+      </tr>
+      <tr>
+        <td><strong>Rank:</strong></td>
+        <td>{{ customer.rank }}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}

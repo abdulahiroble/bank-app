@@ -12,7 +12,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .models import Customer, Account, Loan, Transaction
 from .forms import CustomerForm, AccountForm
 
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.db.models import Count
 
 from django.contrib.auth.forms import AuthenticationForm
@@ -52,13 +52,17 @@ class IndexView(TemplateView):
 #         return render(request, 'bank_app/base.html', context)
 
 
-class CustomerListView(LoginRequiredMixin, View):
+# class CustomerListView(LoginRequiredMixin, View):
+#     login_url = 'login'
+
+#     def get(self, request):
+#         customers = Customer.objects.all()
+#         return render(request, 'bank_app/customer_list.html', {'customers': customers})
+
+class CustomerListView(LoginRequiredMixin, ListView):
+    model = Customer
+    template_name = 'bank_app/customer_list.html'
     login_url = 'login'
-
-    def get(self, request):
-        customers = Customer.objects.all()
-        return render(request, 'bank_app/customer_list.html', {'customers': customers})
-
 
 # class CreateCustomerView(LoginRequiredMixin, CreateView):
 #     login_url = 'login'
@@ -66,6 +70,12 @@ class CustomerListView(LoginRequiredMixin, View):
 #     form_class = CustomerForm
 #     template_name = 'bank_app/create_customer.html'
 #     success_url = reverse_lazy('customer_list')
+
+class CustomerDetailView(LoginRequiredMixin, DetailView):
+    login_url = 'login'
+    model = Customer
+    template_name = 'bank_app/customer_details.html'
+    context_object_name = 'customer'
 
 class CreateCustomerView(LoginRequiredMixin, CreateView):
     login_url = 'login'
