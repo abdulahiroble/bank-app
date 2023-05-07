@@ -60,12 +60,23 @@ class CustomerListView(LoginRequiredMixin, View):
         return render(request, 'bank_app/customer_list.html', {'customers': customers})
 
 
+# class CreateCustomerView(LoginRequiredMixin, CreateView):
+#     login_url = 'login'
+#     model = Customer
+#     form_class = CustomerForm
+#     template_name = 'bank_app/create_customer.html'
+#     success_url = reverse_lazy('customer_list')
+
 class CreateCustomerView(LoginRequiredMixin, CreateView):
     login_url = 'login'
     model = Customer
     form_class = CustomerForm
     template_name = 'bank_app/create_customer.html'
-    success_url = reverse_lazy('customer_list')
+    success_url = reverse_lazy('bank_app/customer_list')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class UpdateCustomerView(LoginRequiredMixin, UpdateView):
@@ -131,18 +142,18 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
     
 class LogoutView(LogoutView):
     template_name = 'registration/logout.html'
-    next_page = reverse_lazy('home')
+    next_page = reverse_lazy('bank_app:home')
 
 class LoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'registration/login.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('bank_app:home')
     
     
 class RegisterView(CreateView):
     template_name = 'registration/register.html'
     form_class = UserCreationForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('bank_app:home')
 
 
 # def test(request):
