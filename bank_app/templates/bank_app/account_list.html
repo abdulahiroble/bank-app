@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Accounts</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Account Number</th>
+        <th>Account Type</th>
+        <th>Balance</th>
+        <th>Interest Rate</th>
+        <th>Account Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for account in object_list %}
+        <tr>
+          <td><a href="{% url 'account_details' pk=account.pk %}">{{ account.account_number }}</a></td>
+          <td>{{ account.account_type }}</td>
+          <td>{{ account.balance }}</td>
+          <td>{{ account.interest_rate }}</td>
+          <td>{{ account.customer }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

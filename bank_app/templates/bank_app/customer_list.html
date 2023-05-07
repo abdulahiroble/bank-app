@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Customers</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>rank</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in object_list %}
+        <tr>
+          <td>{{ customer.user.username }}</td>
+          <td>{{ customer.rank }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
