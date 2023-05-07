@@ -22,6 +22,9 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 
+from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
+
 class IndexView(TemplateView):
     template_name = 'base.html'
 
@@ -126,7 +129,10 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
     template_name = 'bank_app/create_account.html'
     success_url = reverse_lazy('account_list')
     
-
+class LogoutView(LogoutView):
+    template_name = 'registration/logout.html'
+    next_page = reverse_lazy('home')
+    
 class LoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'registration/login.html'
@@ -139,5 +145,5 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('home')
 
 
-def test(request):
-    return render(request, 'registration/register.html')
+# def test(request):
+#     return render(request, 'registration/register.html')

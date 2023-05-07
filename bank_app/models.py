@@ -28,6 +28,7 @@ class Account(models.Model):
     balance = models.DecimalField(max_digits=12, decimal_places=2)
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
     account_type = models.CharField(max_length=1, choices=ACCOUNT_TYPES)
+    account_number = models.CharField(max_length=10, unique=True, null=True)
 
     def __str__(self):
         return self.IBAN
