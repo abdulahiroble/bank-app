@@ -132,7 +132,7 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
 class LogoutView(LogoutView):
     template_name = 'registration/logout.html'
     next_page = reverse_lazy('home')
-    
+
 class LoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'registration/login.html'
