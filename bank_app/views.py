@@ -148,7 +148,7 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
     model = Account
     form_class = AccountForm
     template_name = 'bank_app/create_account.html'
-    success_url = reverse_lazy('account_list')
+    success_url = reverse_lazy('bank_app:home')
     
 class LogoutView(LogoutView):
     template_name = 'registration/logout.html'

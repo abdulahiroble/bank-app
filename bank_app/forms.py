@@ -43,17 +43,23 @@ class CustomerForm(ModelForm):
         return cleaned_data
 
 class AccountForm(ModelForm):
-    customer = forms.ModelChoiceField(queryset=Customer.objects.all())
-
+    owner = forms.ModelChoiceField(queryset=Customer.objects.all())
+    
     class Meta:
         model = Account
-        fields = ['account_type', 'balance']
+        fields = ['account_type', 'balance', 'owner', 'IBAN']
 
     def clean_balance(self):
         balance = self.cleaned_data.get('balance')
         if balance < 0:
             raise ValidationError(_('Balance cannot be negative.'))
         return balance
+    
+    # def clean_owner(self):
+    #     owner = Customer.objects.get(id=self.cleaned_data.get('owner').id)
+    #     if owner is None:
+    #         raise ValidationError(_('Owner cannot be empty.'))
+    #     return owner
     
 
 
