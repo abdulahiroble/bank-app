@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Accounts</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Account number</th>
+        <th>Balance</th>
+        <th>Owner</th>
+        <th>Account Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for account in accounts %}
+        <tr>
+          <td>{{ account.account_number }}</td>
+          <td>{{ account.balance }}</td>
+          <td>{{ account.owner.user.username }}</td>
+          <td>{{ account.account_type }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

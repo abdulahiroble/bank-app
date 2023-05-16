@@ -134,13 +134,13 @@ class AccountListView(LoginRequiredMixin, View):
         return render(request, 'bank_app/account_list.html', {'accounts': accounts})
 
 
-class AccountDetailsView(LoginRequiredMixin, View):
-    login_url = 'login'
+# class AccountDetailsView(LoginRequiredMixin, View):
+#     login_url = 'login'
 
-    def get(self, request, account_number):
-        account = Account.objects.get(account_number=account_number)
-        transactions = Transaction.objects.filter(account=account).order_by('-date')
-        return render(request, 'bank_app/account_details.html', {'account': account, 'transactions': transactions})
+#     def get(self, request, account_number):
+#         account = Account.objects.get(account_number=account_number)
+#         transactions = Transaction.objects.filter(account=account).order_by('-date')
+#         return render(request, 'bank_app/account_details.html', {'account': account, 'transactions': transactions})
 
 
 class CreateAccountView(LoginRequiredMixin, CreateView):

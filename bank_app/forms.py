@@ -54,7 +54,7 @@ class AccountForm(ModelForm):
         if balance < 0:
             raise ValidationError(_('Balance cannot be negative.'))
         return balance
-
+    
 
 
 # class AccountForm(ModelForm):
