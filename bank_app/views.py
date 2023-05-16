@@ -71,11 +71,11 @@ class CustomerListView(LoginRequiredMixin, ListView):
 #     template_name = 'bank_app/create_customer.html'
 #     success_url = reverse_lazy('customer_list')
 
-class CustomerDetailView(LoginRequiredMixin, DetailView):
-    login_url = 'login'
-    model = Customer
-    template_name = 'bank_app/customer_details.html'
-    context_object_name = 'customer'
+# class CustomerDetailView(LoginRequiredMixin, DetailView):
+#     login_url = 'login'
+#     model = Customer
+#     template_name = 'bank_app/customer_details.html'
+#     context_object_name = 'customer'
 
 class CreateCustomerView(LoginRequiredMixin, CreateView):
     login_url = 'login'
