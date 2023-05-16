@@ -71,11 +71,11 @@ class CustomerListView(LoginRequiredMixin, ListView):
 #     template_name = 'bank_app/create_customer.html'
 #     success_url = reverse_lazy('customer_list')
 
-class CustomerDetailView(LoginRequiredMixin, DetailView):
-    login_url = 'login'
-    model = Customer
-    template_name = 'bank_app/customer_details.html'
-    context_object_name = 'customer'
+# class CustomerDetailView(LoginRequiredMixin, DetailView):
+#     login_url = 'login'
+#     model = Customer
+#     template_name = 'bank_app/customer_details.html'
+#     context_object_name = 'customer'
 
 class CreateCustomerView(LoginRequiredMixin, CreateView):
     login_url = 'login'
@@ -134,13 +134,13 @@ class AccountListView(LoginRequiredMixin, View):
         return render(request, 'bank_app/account_list.html', {'accounts': accounts})
 
 
-class AccountDetailsView(LoginRequiredMixin, View):
-    login_url = 'login'
+# class AccountDetailsView(LoginRequiredMixin, View):
+#     login_url = 'login'
 
-    def get(self, request, account_number):
-        account = Account.objects.get(account_number=account_number)
-        transactions = Transaction.objects.filter(account=account).order_by('-date')
-        return render(request, 'bank_app/account_details.html', {'account': account, 'transactions': transactions})
+#     def get(self, request, account_number):
+#         account = Account.objects.get(account_number=account_number)
+#         transactions = Transaction.objects.filter(account=account).order_by('-date')
+#         return render(request, 'bank_app/account_details.html', {'account': account, 'transactions': transactions})
 
 
 class CreateAccountView(LoginRequiredMixin, CreateView):
@@ -148,7 +148,7 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
     model = Account
     form_class = AccountForm
     template_name = 'bank_app/create_account.html'
-    success_url = reverse_lazy('account_list')
+    success_url = reverse_lazy('bank_app:home')
     
 class LogoutView(LogoutView):
     template_name = 'registration/logout.html'
