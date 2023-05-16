@@ -34,11 +34,11 @@ class CustomerForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        email = cleaned_data.get('email')
-        customer_id = self.instance.id if self.instance else None
+        # email = cleaned_data.get('email')
+        # customer_id = self.instance.id if self.instance else None
 
-        if Customer.objects.filter(email=email).exclude(id=customer_id).exists():
-            raise ValidationError(_('A customer with this email already exists.'))
+        # if Customer.objects.filter(email=email).exclude(id=customer_id).exists():
+        #     raise ValidationError(_('A customer with this email already exists.'))
 
         return cleaned_data
 
