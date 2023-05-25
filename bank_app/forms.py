@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
-from .models import Account, Customer, Loan
+from .models import Account, Customer, Loan, Payment
 
 
 # class CustomerForm(ModelForm):
@@ -78,7 +78,7 @@ class AccountForm(ModelForm):
 class LoanForm(ModelForm):
     class Meta:
         model = Loan
-        fields = ['customer', 'amount', 'interest_rate', 'term_in_years']
+        fields = ['customer', 'amount', 'interest_rate', 'term_in_years', "duration"]
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
@@ -97,10 +97,26 @@ class LoanForm(ModelForm):
         if term_in_years < 0:
             raise ValidationError(_('Term cannot be negative.'))
         return term_in_years
-
+    
     def clean(self):
         cleaned_data = super().clean()
         customer = cleaned_data.get('customer')
-        if customer and customer.rank == Customer.REGULAR and Loan.objects.filter(customer=customer).exists():
-            raise ValidationError(_('A regular customer cannot have more than one active loan.'))
+        if customer and customer.rank not in ['silver', 'gold']:
+            raise ValidationError(_('Only customers ranked as silver or gold can apply for a loan.'))
         return cleaned_data
+
+# class PaymentForm(ModelForm):
+#     payment_amount = forms.DecimalField(label='Payment Amount', min_value=0)
+
+class PaymentForm(forms.ModelForm):
+    payment_amount = forms.DecimalField(min_value=0)
+
+    class Meta:
+        model = Payment
+        fields = ['loan', 'payment_amount']
+
+    def clean_payment_amount(self):
+        payment_amount = self.cleaned_data.get('payment_amount')
+        if payment_amount < 0:
+            raise forms.ValidationError("Payment amount cannot be negative.")
+        return payment_amount
