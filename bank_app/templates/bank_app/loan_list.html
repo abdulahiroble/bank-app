@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Loan List</h1>
+  {% if loans %}
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Amount</th>
+          <th>Interest Rate</th>
+          <th>Term (in years)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in loans %}
+          <tr>
+            <td>{{ loan.customer }}</td>
+            <td>{{ loan.amount }}</td>
+            <td>{{ loan.interest_rate }}</td>
+            <td>{{ loan.term_in_years }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No loans available.</p>
+  {% endif %}
+{% endblock %}

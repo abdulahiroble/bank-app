@@ -78,7 +78,7 @@ class AccountForm(ModelForm):
 class LoanForm(ModelForm):
     class Meta:
         model = Loan
-        fields = ['customer', 'amount', 'interest_rate', 'term_in_years']
+        fields = ['customer', 'amount', 'interest_rate', 'term_in_years', "duration"]
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
@@ -98,9 +98,16 @@ class LoanForm(ModelForm):
             raise ValidationError(_('Term cannot be negative.'))
         return term_in_years
 
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     customer = cleaned_data.get('customer')
+    #     if customer and customer.rank not in ['silver', 'gold']:
+    #         raise ValidationError(_('Only customers ranked as silver or gold can apply for a loan.'))
+    #     return cleaned_data
+    
     def clean(self):
         cleaned_data = super().clean()
         customer = cleaned_data.get('customer')
-        if customer and customer.rank == Customer.REGULAR and Loan.objects.filter(customer=customer).exists():
-            raise ValidationError(_('A regular customer cannot have more than one active loan.'))
+        if customer and customer.rank not in ['silver', 'gold']:
+            raise ValidationError(_('Only customers ranked as silver or gold can apply for a loan.'))
         return cleaned_data

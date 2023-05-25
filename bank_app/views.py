@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Customer, Account, Loan, Transaction
-from .forms import CustomerForm, AccountForm
+from .forms import CustomerForm, AccountForm, LoanForm
 
 from django.views.generic import TemplateView, ListView
 from django.db.models import Count
@@ -149,7 +149,27 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
     form_class = AccountForm
     template_name = 'bank_app/create_account.html'
     success_url = reverse_lazy('bank_app:home')
-    
+
+
+class CreateLoanView(View):
+    def get(self, request):
+        form = LoanForm()
+        return render(request, 'bank_app/create_loan.html', {'form': form})
+
+    def post(self, request):
+        form = LoanForm(request.POST)
+        if form.is_valid():
+            print(form.errors)
+            customer = request.user.customer
+            if customer.rank in ['silver', 'gold']:
+                loan = form.save(commit=False)
+                loan.customer = customer
+                loan.save()
+                return redirect('bank_app:loan_list')
+            else:
+                messages.error(request, 'Only customers with silver and gold rank can create loans.')
+        return render(request, 'bank_app/create_loan.html', {'form': form})
+
 class LogoutView(LogoutView):
     template_name = 'registration/logout.html'
     next_page = reverse_lazy('bank_app:home')
@@ -164,6 +184,12 @@ class RegisterView(CreateView):
     template_name = 'registration/register.html'
     form_class = UserCreationForm
     success_url = reverse_lazy('bank_app:home')
+    
+class LoanListView(LoginRequiredMixin, ListView):
+    login_url = 'login'
+    model = Loan
+    template_name = 'bank_app/loan_list.html'
+    context_object_name = 'loans'
 
 
 # def test(request):
