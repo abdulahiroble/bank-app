@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -9,11 +9,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Customer, Account, Loan, Transaction
-from .forms import CustomerForm, AccountForm, LoanForm
+from .models import Customer, Account, Loan, Transaction, Payment
+from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm
 
 from django.views.generic import TemplateView, ListView
-from django.db.models import Count
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
@@ -162,7 +161,7 @@ class CreateLoanView(View):
             print(form.errors)
             customer = request.user.customer
             if customer.rank in ['silver', 'gold']:
-                loan = form.save(commit=False)
+                loan = form.save(commit=True)
                 loan.customer = customer
                 loan.save()
                 return redirect('bank_app:loan_list')
@@ -170,6 +169,37 @@ class CreateLoanView(View):
                 messages.error(request, 'Only customers with silver and gold rank can create loans.')
         return render(request, 'bank_app/create_loan.html', {'form': form})
 
+class MakePaymentView(LoginRequiredMixin, FormView):
+    login_url = 'login'
+    form_class = PaymentForm
+    template_name = 'bank_app/make_payment.html'
+    success_url = '/loans/'  # Update with the appropriate URL
+
+    def form_valid(self, form):
+        loan_id = self.kwargs['pk']
+        payment_amount = form.cleaned_data['payment_amount']
+
+        # Get the loan object
+        loan = Loan.objects.get(pk=loan_id)
+
+        # Update the loan balance
+        loan.balance -= payment_amount
+        loan.save()
+
+        # Create a payment record
+        payment = Payment.objects.create(loan=loan, amount=payment_amount)
+
+        # Update loan payment records
+        loan.payments.add(payment)
+
+        return super().form_valid(form)
+
+class LoanDetailView(LoginRequiredMixin, DetailView):
+    login_url = 'login'
+    model = Loan
+    template_name = 'bank_app/loan_details.html'
+    context_object_name = 'loan'
+    
 class LogoutView(LogoutView):
     template_name = 'registration/logout.html'
     next_page = reverse_lazy('bank_app:home')

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -35,13 +36,26 @@ class Account(models.Model):
 
 
 
+# class Loan(models.Model):
+#     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+#     amount = models.DecimalField(max_digits=12, decimal_places=2)
+#     duration = models.PositiveIntegerField(help_text="Duration in months")
+#     interest_rate = models.DecimalField(max_digits=4, decimal_places=2, help_text="In percentage %")
+#     start_date = models.DateField(auto_now_add=True)
+#     term_in_years = models.PositiveIntegerField(help_text="Loan term in years")
+    
 class Loan(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     duration = models.PositiveIntegerField(help_text="Duration in months")
     interest_rate = models.DecimalField(max_digits=4, decimal_places=2, help_text="In percentage %")
-    start_date = models.DateField(auto_now_add=True)
+    start_date = models.DateField(default=timezone.now, null=True)
     term_in_years = models.PositiveIntegerField(help_text="Loan term in years")
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+
+    def __str__(self):
+        return f"{self.customer}'s loan ({self.amount}$)"
+
 
     def __str__(self):
         return f"{self.customer}'s loan ({self.amount}$)"
@@ -60,3 +74,11 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.transaction_type} {self.amount} on {self.date} for {self.account}"
+
+class Payment(models.Model):
+    loan = models.ForeignKey('Loan', on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Payment #{self.pk} - Loan: {self.loan}, Amount: {self.amount}"

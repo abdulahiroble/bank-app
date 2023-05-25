@@ -15,7 +15,7 @@
       <tbody>
         {% for loan in loans %}
           <tr>
-            <td>{{ loan.customer }}</td>
+            <td><a href="{% url 'bank_app:loan_details' loan.pk %}">{{ loan.customer }}</a></td>
             <td>{{ loan.amount }}</td>
             <td>{{ loan.interest_rate }}</td>
             <td>{{ loan.term_in_years }}</td>

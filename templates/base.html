@@ -43,6 +43,7 @@
                     <a href="{% url 'bank_app:account_list' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Accounts</a>
                     <a href="{% url 'bank_app:create_customer' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Create Customer</a>
                     <a href="{% url 'bank_app:create_loan' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Make a loan</a>
+                    <a href="{% url 'bank_app:loan_list' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Loans</a>
                     <a href="{% url 'bank_app:create_account' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Create Account</a>
                     <form action="{% url 'bank_app:logout' %}" method="post">
                       {% csrf_token %}
