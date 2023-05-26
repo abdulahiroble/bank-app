@@ -11,8 +11,8 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('loans/', views.LoanListView.as_view(), name='loan_list'),
     
-    # path('accounts/<str:account_number>/', views.AccountDetailsView.as_view(), name='account_details'),
     path('accounts/', views.AccountListView.as_view(), name='account_list'),
+    path('accounts/<int:pk>/', views.AccountDetailView.as_view(), name='account_details'),
     path('accounts/create/', views.CreateAccountView.as_view(), name='create_account'),
 
     path('customers/', views.CustomerListView.as_view(), name='customer_list'),

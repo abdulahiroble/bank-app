@@ -215,12 +215,18 @@ class RegisterView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('bank_app:home')
     
+# views.py
 class LoanListView(LoginRequiredMixin, ListView):
     login_url = 'login'
-    model = Loan
-    template_name = 'bank_app/loan_list.html'
-    context_object_name = 'loans'
+    model = Account
+    template_name = 'bank_app/account_list.html'
+    context_object_name = 'accounts'
 
+class AccountDetailView(LoginRequiredMixin, DetailView):
+    login_url = 'login'
+    model = Account
+    template_name = 'bank_app/account_details.html'
+    context_object_name = 'account'
 
 # def test(request):
 #     return render(request, 'registration/register.html')

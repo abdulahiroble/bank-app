@@ -1,5 +1,10 @@
+<!-- account_details.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Test</h1>
+  <h1>Account Details</h1>
+  <p>Account Number: {{ account.account_number }}</p>
+  <p>Balance: {{ account.balance }}</p>
+  <p>Account Type: {{ account.account_type }}</p>
+  <!-- Additional details as needed -->
 {% endblock %}
