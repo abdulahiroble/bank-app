@@ -218,9 +218,9 @@ class RegisterView(CreateView):
 # views.py
 class LoanListView(LoginRequiredMixin, ListView):
     login_url = 'login'
-    model = Account
-    template_name = 'bank_app/account_list.html'
-    context_object_name = 'accounts'
+    model = Loan
+    template_name = 'bank_app/loan_list.html'
+    context_object_name = 'loans'
 
 class AccountDetailView(LoginRequiredMixin, DetailView):
     login_url = 'login'
