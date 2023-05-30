@@ -26,9 +26,10 @@ from django.urls import reverse_lazy
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
 from rest_framework import status
 from .models import Loan
-from .serializers import LoanSerializer
+from .serializers import LoanSerializer, AccountSerializer
 
 
 class IndexView(TemplateView):
@@ -41,47 +42,11 @@ class IndexView(TemplateView):
         context['num_loans'] = Loan.objects.all().count()
         return context
 
-# class IndexView(LoginRequiredMixin, View):
-#     login_url = 'login'
-
-#     def get(self, request):
-#         num_customers = Customer.objects.all().count()
-#         num_accounts = Account.objects.all().count()
-#         num_loans = Loan.objects.all().count()
-
-#         context = {
-#             'num_customers': num_customers,
-#             'num_accounts': num_accounts,
-#             'num_loans': num_loans,
-#         }
-
-#         return render(request, 'bank_app/base.html', context)
-
-
-# class CustomerListView(LoginRequiredMixin, View):
-#     login_url = 'login'
-
-#     def get(self, request):
-#         customers = Customer.objects.all()
-#         return render(request, 'bank_app/customer_list.html', {'customers': customers})
-
 class CustomerListView(LoginRequiredMixin, ListView):
     model = Customer
     template_name = 'bank_app/customer_list.html'
     login_url = 'login'
 
-# class CreateCustomerView(LoginRequiredMixin, CreateView):
-#     login_url = 'login'
-#     model = Customer
-#     form_class = CustomerForm
-#     template_name = 'bank_app/create_customer.html'
-#     success_url = reverse_lazy('customer_list')
-
-# class CustomerDetailView(LoginRequiredMixin, DetailView):
-#     login_url = 'login'
-#     model = Customer
-#     template_name = 'bank_app/customer_details.html'
-#     context_object_name = 'customer'
 
 class CreateCustomerView(LoginRequiredMixin, CreateView):
     login_url = 'login'
@@ -247,3 +212,23 @@ class LoanListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+### API Views
+class ListAccountsAPIView(ListAPIView):
+    serializer_class = AccountSerializer
+    queryset = Account.objects.all()
+    
+class CreateAccountAPIView(CreateAPIView):
+    serializer_class = AccountSerializer
+    
+class RetrieveAccountAPIView(RetrieveAPIView):
+    serializer_class = AccountSerializer
+    queryset = Account.objects.all()
+    
+class UpdateAccountAPIView(UpdateAPIView):
+    serializer_class = AccountSerializer
+    queryset = Account.objects.all()
+
+class DeleteAccountAPIView(DestroyAPIView):
+    queryset = Account.objects.all()
