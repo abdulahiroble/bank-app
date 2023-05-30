@@ -11,14 +11,6 @@ class Customer(models.Model):
     def __str__(self):
         return self.user.username
 
-# class Account(models.Model):
-#     IBAN = models.CharField(max_length=50, unique=True)
-#     balance = models.DecimalField(max_digits=12, decimal_places=2)
-#     owner = models.ForeignKey(Customer, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return self.IBAN
-
 class Account(models.Model):
     ACCOUNT_TYPES = (
         ('C', 'Checking'),
@@ -34,15 +26,6 @@ class Account(models.Model):
     def __str__(self):
         return self.IBAN
 
-
-
-# class Loan(models.Model):
-#     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-#     amount = models.DecimalField(max_digits=12, decimal_places=2)
-#     duration = models.PositiveIntegerField(help_text="Duration in months")
-#     interest_rate = models.DecimalField(max_digits=4, decimal_places=2, help_text="In percentage %")
-#     start_date = models.DateField(auto_now_add=True)
-#     term_in_years = models.PositiveIntegerField(help_text="Loan term in years")
     
 class Loan(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)

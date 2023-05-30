@@ -6,24 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from .models import Account, Customer, Loan, Payment
 
 
-# class CustomerForm(ModelForm):
-#     class Meta:
-#         model = Customer
-#         fields = ['first_name', 'last_name', 'email', 'rank']
-#         widgets = {
-#             'rank': forms.RadioSelect
-#         }
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         email = cleaned_data.get('email')
-#         customer_id = self.instance.id if self.instance else None
-
-#         if Customer.objects.filter(email=email).exclude(id=customer_id).exists():
-#             raise ValidationError(_('A customer with this email already exists.'))
-
-#         return cleaned_data
-
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
@@ -54,25 +36,6 @@ class AccountForm(ModelForm):
         if balance < 0:
             raise ValidationError(_('Balance cannot be negative.'))
         return balance
-    
-    # def clean_owner(self):
-    #     owner = Customer.objects.get(id=self.cleaned_data.get('owner').id)
-    #     if owner is None:
-    #         raise ValidationError(_('Owner cannot be empty.'))
-    #     return owner
-    
-
-
-# class AccountForm(ModelForm):
-#     class Meta:
-#         model = Account
-#         fields = ['customer', 'account_type', 'balance']
-
-#     def clean_balance(self):
-#         balance = self.cleaned_data.get('balance')
-#         if balance < 0:
-#             raise ValidationError(_('Balance cannot be negative.'))
-#         return balance
 
 
 class LoanForm(ModelForm):
@@ -105,8 +68,6 @@ class LoanForm(ModelForm):
             raise ValidationError(_('Only customers ranked as silver or gold can apply for a loan.'))
         return cleaned_data
 
-# class PaymentForm(ModelForm):
-#     payment_amount = forms.DecimalField(label='Payment Amount', min_value=0)
 
 class PaymentForm(forms.ModelForm):
     payment_amount = forms.DecimalField(min_value=0)

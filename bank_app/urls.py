@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import CreateAccountAPIView, LoanListAPIView, RetrieveAccountAPIView, UpdateAccountAPIView, DeleteAccountAPIView, ListAccountsAPIView
 
 app_name = 'bank_app'
 
@@ -16,11 +17,18 @@ urlpatterns = [
     path('accounts/create/', views.CreateAccountView.as_view(), name='create_account'),
 
     path('customers/', views.CustomerListView.as_view(), name='customer_list'),
-    # path('customers/<pk>/', views.CustomerDetailView.as_view(), name='customer_details'),
     path('customers/create/', views.CreateCustomerView.as_view(), name='create_customer'),
     path('customers/<int:pk>/change-rank/', views.ChangeCustomerRankView.as_view(), name='change_customer_rank'),
     
     path('loans/create/', views.CreateLoanView.as_view(), name='create_loan'),
     path('loans/<int:pk>/make-payment/', views.MakePaymentView.as_view(), name='make_payment'),
     path('loans/<int:pk>/', views.LoanDetailView.as_view(), name='loan_details'),
+
+    path('api/loans/', LoanListAPIView.as_view(), name='loan-list'),
+    
+    path('api/accounts/', ListAccountsAPIView.as_view(), name='list-accounts'),
+    path('api/accounts/create/', CreateAccountAPIView.as_view(), name='create-account'),
+    path('api/accounts/<int:pk>/', RetrieveAccountAPIView.as_view(), name='retrieve-account'),
+    path('api/accounts/<int:pk>/update/', UpdateAccountAPIView.as_view(), name='update-account'),
+    path('api/accounts/<int:pk>/delete/', DeleteAccountAPIView.as_view(), name='delete-account'),
 ]
