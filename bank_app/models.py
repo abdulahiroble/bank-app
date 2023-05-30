@@ -65,3 +65,10 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Payment #{self.pk} - Loan: {self.loan}, Amount: {self.amount}"
+    
+
+class Transfer(models.Model):
+    sender_account = models.ForeignKey(Account, related_name='outgoing_transfers', on_delete=models.CASCADE)
+    receiver_account = models.ForeignKey(Account, related_name='incoming_transfers', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
