@@ -247,11 +247,9 @@ class TransferCreateView(generics.CreateAPIView):
         if sender_account.balance < amount:
             raise serializers.ValidationError("Insufficient funds.")
 
-        # Deduct the amount from the sender's account
         sender_account.balance -= amount
         sender_account.save()
 
-        # Add the amount to the receiver's account
         receiver_account.balance += amount
         receiver_account.save()
 
