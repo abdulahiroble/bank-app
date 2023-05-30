@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Customer, Account, Loan, Transaction, Payment
+from .models import Customer, Account, Loan, Transaction, Payment, Transfer
 from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm
 
 from django.views.generic import TemplateView, ListView
@@ -24,12 +24,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, ListAPIView
 from rest_framework import status
 from .models import Loan
-from .serializers import LoanSerializer, AccountSerializer
+from .serializers import LoanSerializer, AccountSerializer, TransferSerializer
+from bank_app import serializers
 
 
 class IndexView(TemplateView):
@@ -103,15 +105,6 @@ class AccountListView(LoginRequiredMixin, View):
     def get(self, request):
         accounts = Account.objects.all()
         return render(request, 'bank_app/account_list.html', {'accounts': accounts})
-
-
-# class AccountDetailsView(LoginRequiredMixin, View):
-#     login_url = 'login'
-
-#     def get(self, request, account_number):
-#         account = Account.objects.get(account_number=account_number)
-#         transactions = Transaction.objects.filter(account=account).order_by('-date')
-#         return render(request, 'bank_app/account_details.html', {'account': account, 'transactions': transactions})
 
 
 class CreateAccountView(LoginRequiredMixin, CreateView):
@@ -214,7 +207,7 @@ class LoanListAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-### API Views
+
 class ListAccountsAPIView(ListAPIView):
     serializer_class = AccountSerializer
     queryset = Account.objects.all()
@@ -232,3 +225,41 @@ class UpdateAccountAPIView(UpdateAPIView):
 
 class DeleteAccountAPIView(DestroyAPIView):
     queryset = Account.objects.all()
+    
+class TransferCreateView(generics.CreateAPIView):
+    queryset = Transfer.objects.all()
+    serializer_class = TransferSerializer
+
+class TransferDetailView(generics.RetrieveAPIView):
+    queryset = Transfer.objects.all()
+    serializer_class = TransferSerializer
+
+
+class TransferCreateView(generics.CreateAPIView):
+    queryset = Transfer.objects.all()
+    serializer_class = TransferSerializer
+
+    def perform_create(self, serializer):
+        sender_account = serializer.validated_data['sender_account']
+        receiver_account = serializer.validated_data['receiver_account']
+        amount = serializer.validated_data['amount']
+
+        if sender_account.balance < amount:
+            raise serializers.ValidationError("Insufficient funds.")
+
+        # Deduct the amount from the sender's account
+        sender_account.balance -= amount
+        sender_account.save()
+
+        # Add the amount to the receiver's account
+        receiver_account.balance += amount
+        receiver_account.save()
+
+        serializer.save()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
