@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import LoanListAPIView
 
 app_name = 'bank_app'
 
@@ -23,4 +24,7 @@ urlpatterns = [
     path('loans/create/', views.CreateLoanView.as_view(), name='create_loan'),
     path('loans/<int:pk>/make-payment/', views.MakePaymentView.as_view(), name='make_payment'),
     path('loans/<int:pk>/', views.LoanDetailView.as_view(), name='loan_details'),
+
+     path('api/loans/', LoanListAPIView.as_view(), name='loan-list'),
+
 ]

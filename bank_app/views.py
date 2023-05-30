@@ -24,6 +24,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Loan
+from .serializers import LoanSerializer
+
+
 class IndexView(TemplateView):
     template_name = 'base.html'
 
@@ -228,5 +235,15 @@ class AccountDetailView(LoginRequiredMixin, DetailView):
     template_name = 'bank_app/account_details.html'
     context_object_name = 'account'
 
-# def test(request):
-#     return render(request, 'registration/register.html')
+class LoanListAPIView(APIView):
+    def get(self, request):
+        loans = Loan.objects.all()
+        serializer = LoanSerializer(loans, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = LoanSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
