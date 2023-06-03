@@ -1,4 +1,3 @@
-<!-- account_list.html -->
 {% extends 'base.html' %}
 
 {% block content %}
@@ -8,7 +7,6 @@
       <thead>
         <tr>
           <th>Account ID</th>
-          <th>Owner</th>
           <th>IBAN</th>
           <th>Balance</th>
           <th>Account Type</th>
@@ -18,7 +16,6 @@
         {% for account in accounts %}
           <tr>
             <td><a href="{% url 'bank_app:account_details' account.id %}">{{ account.id }}</a></td>
-            <td>{{ account.owner.user.username }}</td>
             <td>{{ account.IBAN }}</td>
             <td>{{ account.balance }}</td>
             <td>{{ account.account_type }}</td>

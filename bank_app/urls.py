@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import CreateAccountAPIView, LoanListAPIView, RetrieveAccountAPIView, UpdateAccountAPIView, DeleteAccountAPIView, ListAccountsAPIView
+from .views import CreateAccountAPIView, LoanListAPIView, RetrieveAccountAPIView, UpdateAccountAPIView, DeleteAccountAPIView, ListAccountsAPIView, UserAccountListView
 
 app_name = 'bank_app'
 
@@ -15,6 +15,7 @@ urlpatterns = [
     path('accounts/', views.AccountListView.as_view(), name='account_list'),
     path('accounts/<int:pk>/', views.AccountDetailView.as_view(), name='account_details'),
     path('accounts/create/', views.CreateAccountView.as_view(), name='create_account'),
+    path('user-accounts/', UserAccountListView.as_view(), name='user_account_list'),
 
     path('customers/', views.CustomerListView.as_view(), name='customer_list'),
     path('customers/create/', views.CreateCustomerView.as_view(), name='create_customer'),

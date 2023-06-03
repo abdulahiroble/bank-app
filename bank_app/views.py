@@ -115,6 +115,18 @@ class AccountListView(LoginRequiredMixin, View):
         accounts = Account.objects.all()
         return render(request, 'bank_app/account_list.html', {'accounts': accounts})
 
+class UserAccountListView(LoginRequiredMixin, View):
+    login_url = 'login'
+
+    def get(self, request):
+        try:
+            customer = request.user.customer
+            accounts = Account.objects.filter(owner=customer)
+        except AttributeError:
+            accounts = []
+        
+        return render(request, 'bank_app/user_account_list.html', {'accounts': accounts})
+
 
 class CreateAccountView(LoginRequiredMixin, CreateView):
     login_url = 'login'
