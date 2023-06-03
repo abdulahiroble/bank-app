@@ -60,6 +60,15 @@ class CreateCustomerView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    
+# class CustomerUpdateView(UpdateView):
+#     model = Customer
+#     form_class = CustomerForm
+#     template_name = 'bank_app/update_customer.html'
+#     success_url = '/customers/'  
+
+#     def get_object(self, queryset=None):
+#         return self.request.user.customer
 
 
 class UpdateCustomerView(LoginRequiredMixin, UpdateView):
@@ -67,7 +76,7 @@ class UpdateCustomerView(LoginRequiredMixin, UpdateView):
     model = Customer
     form_class = CustomerForm
     template_name = 'bank_app/update_customer.html'
-    success_url = reverse_lazy('customer_list')
+    success_url = reverse_lazy('bank_app:customer_list')
 
 
 class DeleteCustomerView(LoginRequiredMixin, DeleteView):
@@ -206,8 +215,6 @@ class LoanListAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 class ListAccountsAPIView(ListAPIView):
     serializer_class = AccountSerializer

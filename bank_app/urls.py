@@ -19,6 +19,7 @@ urlpatterns = [
     path('customers/', views.CustomerListView.as_view(), name='customer_list'),
     path('customers/create/', views.CreateCustomerView.as_view(), name='create_customer'),
     path('customers/<int:pk>/change-rank/', views.ChangeCustomerRankView.as_view(), name='change_customer_rank'),
+    path('customers/update/<int:pk>/', views.UpdateCustomerView.as_view(), name='customer_update'),
     
     path('loans/create/', views.CreateLoanView.as_view(), name='create_loan'),
     path('loans/<int:pk>/make-payment/', views.MakePaymentView.as_view(), name='make_payment'),
