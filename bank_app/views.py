@@ -242,11 +242,26 @@ class CreateTransferView(View):
     def post(self, request):
         form = TransferForm(request.POST)
         if form.is_valid():
-            print(form.errors)
-            transfer = form.save(commit=True)
+            sender_account = form.cleaned_data['sender']
+            receiver_account = form.cleaned_data['recipient']
+            amount = form.cleaned_data['amount']
+             # Perform additional validation and business logic
+            if sender_account.balance >= amount:
+                # Sufficient balance, proceed with the transfer
+                sender_account.balance -= amount
+                receiver_account.balance += amount
+                sender_account.save()
+                receiver_account.save()
+                
+                # Create and save the transfer record
+                transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
+                transfer.save()
+                
+                return redirect('bank_app:create_transfer')
+            else:
+                # Insufficient balance, display an error message
+                form.add_error('amount', 'Insufficient balance for the transfer.')
         
-            transfer.save()
-            return redirect('bank_app:create_transfer')
         return render(request, 'bank_app/create_transfer.html', {'form': form})
         
 
