@@ -28,7 +28,8 @@ class Account(models.Model):
 
     
 class Loan(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=None)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, default=None)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     duration = models.PositiveIntegerField(help_text="Duration in months")
     interest_rate = models.DecimalField(max_digits=4, decimal_places=2, help_text="In percentage %")
@@ -59,6 +60,7 @@ class Transaction(models.Model):
         return f"{self.transaction_type} {self.amount} on {self.date} for {self.account}"
 
 class Payment(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=None)
     loan = models.ForeignKey('Loan', on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)

@@ -41,7 +41,7 @@ class AccountForm(ModelForm):
 class LoanForm(ModelForm):
     class Meta:
         model = Loan
-        fields = ['customer', 'amount', 'interest_rate', 'term_in_years', "duration"]
+        fields = ['account', 'amount', 'interest_rate', 'term_in_years', "duration"]
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
@@ -74,7 +74,7 @@ class PaymentForm(forms.ModelForm):
 
     class Meta:
         model = Payment
-        fields = ['loan', 'payment_amount']
+        fields = ['account', 'loan', 'payment_amount']
 
     def clean_payment_amount(self):
         payment_amount = self.cleaned_data.get('payment_amount')
@@ -82,17 +82,6 @@ class PaymentForm(forms.ModelForm):
             raise forms.ValidationError("Payment amount cannot be negative.")
         return payment_amount
     
-
-# class TransferForm(forms.Form):
-#     sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')
-#     recipient = forms.ModelChoiceField(queryset=Account.objects.all(), label='Recipient')
-#     amount = forms.DecimalField(min_value=0)
-
-#     def clean_transfer_amount(self):
-#         amount = self.cleaned_data.get('amount')
-#         if amount < 0:
-#             raise forms.ValidationError("Amount cannot be negative.")
-#         return amount
 
 class TransferForm(forms.ModelForm):
     sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')

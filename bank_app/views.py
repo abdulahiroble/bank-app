@@ -136,37 +136,58 @@ class CreateAccountView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('bank_app:home')
 
 
-class CreateLoanView(View):
-    def get(self, request):
-        form = LoanForm()
-        return render(request, 'bank_app/create_loan.html', {'form': form})
 
-    def post(self, request):
-        form = LoanForm(request.POST)
-        if form.is_valid():
-            print(form.errors)
-            customer = request.user.customer
-            if customer.rank in ['silver', 'gold']:
-                loan = form.save(commit=True)
-                loan.customer = customer
-                loan.save()
-                return redirect('bank_app:loan_list')
-            else:
-                messages.error(request, 'Only customers with silver and gold rank can create loans.')
-        return render(request, 'bank_app/create_loan.html', {'form': form})
+class CreateLoanView(LoginRequiredMixin, CreateView):
+    model = Loan
+    form_class = LoanForm
+    template_name = 'bank_app/create_loan.html'
+    success_url = reverse_lazy('bank_app:home')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        customer = self.request.user.customer
+        accounts = Account.objects.filter(owner=customer)
+        form.fields['account'].queryset = accounts
+        return form
+
+    def form_valid(self, form):
+        customer = self.request.user.customer
+        account = form.cleaned_data['account']
+        loan_amount = form.cleaned_data['amount']
+
+        if customer.rank in ['silver', 'gold']:
+            # Add the loan amount to the selected account balance
+            account.balance += loan_amount
+            account.save()
+
+            # Create the loan
+            loan = form.save(commit=False)
+            loan.customer = customer
+            loan.save()
+
+            return redirect(self.get_success_url())
+        else:
+            messages.error(self.request, 'Only customers with silver and gold rank can create loans.')
+            return self.form_invalid(form)
+        
 
 class MakePaymentView(LoginRequiredMixin, FormView):
     login_url = 'login'
     form_class = PaymentForm
     template_name = 'bank_app/make_payment.html'
-    success_url = '/loans/'  # Update with the appropriate URL
+    success_url = reverse_lazy('bank_app:home')
 
     def form_valid(self, form):
         loan_id = self.kwargs['pk']
         payment_amount = form.cleaned_data['payment_amount']
+        account = form.cleaned_data['account']
 
         # Get the loan object
         loan = Loan.objects.get(pk=loan_id)
+
+        # Deduct payment amount from account balance
+        account.balance -= payment_amount
+        account.save()
 
         # Update the loan balance
         loan.balance += payment_amount
