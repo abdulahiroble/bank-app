@@ -8,6 +8,7 @@
       <thead>
         <tr>
           <th>Account ID</th>
+          <th>IBAN</th>
           <th>Balance</th>
           <th>Account Type</th>
         </tr>
@@ -16,6 +17,7 @@
         {% for account in accounts %}
           <tr>
             <td><a href="{% url 'bank_app:account_details' account.id %}">{{ account.id }}</a></td>
+            <td>{{ account.IBAN }}</td>
             <td>{{ account.balance }}</td>
             <td>{{ account.account_type }}</td>
           </tr>

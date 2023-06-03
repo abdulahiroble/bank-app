@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
-from .models import Account, Customer, Loan, Payment
+from .models import Account, Customer, Loan, Payment, Transfer
 
 
 class CustomerForm(ModelForm):
@@ -81,3 +81,31 @@ class PaymentForm(forms.ModelForm):
         if payment_amount < 0:
             raise forms.ValidationError("Payment amount cannot be negative.")
         return payment_amount
+    
+
+# class TransferForm(forms.Form):
+#     sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')
+#     recipient = forms.ModelChoiceField(queryset=Account.objects.all(), label='Recipient')
+#     amount = forms.DecimalField(min_value=0)
+
+#     def clean_transfer_amount(self):
+#         amount = self.cleaned_data.get('amount')
+#         if amount < 0:
+#             raise forms.ValidationError("Amount cannot be negative.")
+#         return amount
+
+class TransferForm(forms.ModelForm):
+    sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')
+    recipient = forms.ModelChoiceField(queryset=Account.objects.all(), label='Recipient')
+    amount = forms.DecimalField(min_value=0)
+
+    class Meta:
+        model = Transfer
+        fields = ['sender', 'recipient', 'amount']
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount < 0:
+            raise forms.ValidationError("Amount cannot be negative.")
+        return amount
+    
