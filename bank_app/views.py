@@ -148,7 +148,8 @@ class MakePaymentView(LoginRequiredMixin, FormView):
         loan = Loan.objects.get(pk=loan_id)
 
         # Update the loan balance
-        loan.balance -= payment_amount
+        loan.balance += payment_amount
+        loan.amount -= payment_amount
         loan.save()
 
         # Create a payment record
