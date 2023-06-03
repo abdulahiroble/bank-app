@@ -4,7 +4,9 @@
   <h1>Create a New Customer</h1>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ user_form.as_p }}
+    {{ customer_form.as_p }}
     <button type="submit">Create Customer</button>
   </form>
+  
 {% endblock %}

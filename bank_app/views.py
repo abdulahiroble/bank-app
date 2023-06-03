@@ -49,27 +49,22 @@ class CustomerListView(LoginRequiredMixin, ListView):
     template_name = 'bank_app/customer_list.html'
     login_url = 'login'
 
+class CreateCustomerView(View):
+    def get(self, request):
+        user_form = UserCreationForm()
+        customer_form = CustomerForm()
+        return render(request, 'bank_app/create_customer.html', {'user_form': user_form, 'customer_form': customer_form})
 
-class CreateCustomerView(LoginRequiredMixin, CreateView):
-    login_url = 'login'
-    model = Customer
-    form_class = CustomerForm
-    template_name = 'bank_app/create_customer.html'
-    success_url = reverse_lazy('bank_app/customer_list')
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-    
-# class CustomerUpdateView(UpdateView):
-#     model = Customer
-#     form_class = CustomerForm
-#     template_name = 'bank_app/update_customer.html'
-#     success_url = '/customers/'  
-
-#     def get_object(self, queryset=None):
-#         return self.request.user.customer
-
+    def post(self, request):
+        user_form = UserCreationForm(request.POST)
+        customer_form = CustomerForm(request.POST)
+        if user_form.is_valid() and customer_form.is_valid():
+            user = user_form.save()
+            customer = customer_form.save(commit=False)
+            customer.user = user
+            customer.save()
+            return redirect('bank_app:customer_list')
+        return render(request, 'bank_app/create_customer.html', {'user_form': user_form, 'customer_form': customer_form})
 
 class UpdateCustomerView(LoginRequiredMixin, UpdateView):
     login_url = 'login'
