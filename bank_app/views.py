@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Customer, Account, Loan, Transaction, Payment, Transfer
-from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm
+from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm, TransferForm
 
 from django.views.generic import TemplateView, ListView
 
@@ -233,6 +233,23 @@ class TransferCreateView(generics.CreateAPIView):
 class TransferDetailView(generics.RetrieveAPIView):
     queryset = Transfer.objects.all()
     serializer_class = TransferSerializer
+
+class CreateTransferView(View):
+    def get(self, request):
+        form = TransferForm()
+        return render(request, 'bank_app/create_transfer.html', {'form': form})
+    
+    def post(self, request):
+        form = TransferForm(request.POST)
+        if form.is_valid():
+            print(form.errors)
+            transfer = form.save(commit=True)
+        
+            transfer.save()
+            return redirect('bank_app:create_transfer')
+        return render(request, 'bank_app/create_transfer.html', {'form': form})
+        
+
 
 
 class TransferCreateView(generics.CreateAPIView):

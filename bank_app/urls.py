@@ -24,8 +24,12 @@ urlpatterns = [
     path('loans/<int:pk>/make-payment/', views.MakePaymentView.as_view(), name='make_payment'),
     path('loans/<int:pk>/', views.LoanDetailView.as_view(), name='loan_details'),
     
-    path('api/transfers/', views.TransferCreateView.as_view(), name='create_transfer'),
-    path('api/transfers/<int:pk>/', views.TransferDetailView.as_view(), name='transfer_detail'),
+    # path('transfers/', views.TransferListView.as_view(), name='transfer_list'),
+    path('transfers/create/', views.CreateTransferView.as_view(), name='create_transfer'),
+    path('transfers/<int:pk>/', views.TransferDetailView.as_view(), name='transfer_details'),
+
+    # path('api/transfers/', views.TransferCreateView.as_view(), name='create_transfer'),
+    # path('api/transfers/<int:pk>/', views.TransferDetailView.as_view(), name='transfer_detail'),
 
     path('api/loans/', LoanListAPIView.as_view(), name='loan-list'),
     
