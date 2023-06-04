@@ -1,4 +1,5 @@
 import json
+import os
 import random
 from django.shortcuts import render, redirect
 from django.views import View
@@ -11,6 +12,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 import requests
+
+from dotenv import load_dotenv
 
 from django.core.cache import cache
 
@@ -40,6 +43,7 @@ from .models import Loan
 from .serializers import LoanSerializer, AccountSerializer, TransferSerializer
 from bank_app import serializers
 
+load_dotenv()
 
 class IndexView(TemplateView):
     template_name = 'base.html'
@@ -421,14 +425,14 @@ def generate_verification_code():
 
 def send_sms_verification(phone_number, verification_code):
     # Replace with your Twilio account SID and auth token
-    account_sid = ''
-    auth_token = ''
+    account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+    auth_token = os.getenv('TWILIO_AUTH_TOKEN')
 
     # Create a Twilio client
     client = Client(account_sid, auth_token)
 
     # Replace with your Twilio phone number
-    twilio_phone_number = '+19452073127'
+    twilio_phone_number = os.getenv('TWILIO_NUMBER')
 
     # Compose the SMS message
     message = f"Your verification code is: {verification_code}"
@@ -449,20 +453,24 @@ class VerifyCodeView(View):
         verification_code = request.POST.get('verification_code')
 
         # Retrieve the stored verification code and message SID from cache
-        stored_verification_code = cache.get(f"verification_code:{phone_number}")
+        stored_verification_code = self.request.session['verification_code']
         message_sid = cache.get(f"message_sid:{phone_number}")
 
-        if verification_code == stored_verification_code:
+        print("SMS Code:   " + str(stored_verification_code))
+        print("User input: " + verification_code)
+
+        if verification_code == str(stored_verification_code):
           
-        
+            print("Verification code matches")
 
             # Clear the verification code and message SID from cache
             cache.delete(f"verification_code:{phone_number}")
             cache.delete(f"message_sid:{phone_number}")
 
-            return redirect('bank_app:sms_verification')
+            return redirect('bank_app:send_verification')
         else:
             # Verification code does not match
+            print("Verification code does not match")
             messages.error(request, 'Invalid verification code.')
 
         return redirect('bank_app:verify_code')
