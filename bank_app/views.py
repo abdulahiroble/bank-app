@@ -421,8 +421,8 @@ def generate_verification_code():
 
 def send_sms_verification(phone_number, verification_code):
     # Replace with your Twilio account SID and auth token
-    account_sid = 'AC8c82b8ec978b729894050ad6643a338d'
-    auth_token = '13ef0b92865f81892769983b72b302c7'
+    account_sid = ''
+    auth_token = ''
 
     # Create a Twilio client
     client = Client(account_sid, auth_token)
