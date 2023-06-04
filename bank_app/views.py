@@ -1,4 +1,5 @@
 import json
+import random
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
@@ -11,8 +12,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 import requests
 
+from twilio.rest import Client
+
 from .models import Customer, Account, Loan, Transaction, Payment, Transfer
-from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm, TransferForm
+from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm, SMSVerificationForm, TransferForm
 
 from django.views.generic import TemplateView, ListView
 
@@ -387,3 +390,49 @@ class TransferCreateView(generics.CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+class SMSVerificationView(FormView):
+    form_class = SMSVerificationForm
+    template_name = 'bank_app/sms_verification.html'
+    success_url = '/verify-code/'  # Replace with your desired success URL
+
+    def form_valid(self, form):
+        # Get the phone number from the form
+        phone_number = form.cleaned_data['phone_number']
+
+        # Generate a random verification code (you can customize this logic)
+        verification_code = generate_verification_code()
+
+        # Save the verification code in the session (or you can store it in the database)
+        self.request.session['verification_code'] = verification_code
+
+        # Send the SMS verification code using Twilio
+        send_sms_verification(phone_number, verification_code)
+
+        return super().form_valid(form)
+
+def generate_verification_code():
+        verification_code = random.randint(100000, 999999)
+        return verification_code
+
+def send_sms_verification(phone_number, verification_code):
+    # Replace with your Twilio account SID and auth token
+    account_sid = 'AC8c82b8ec978b729894050ad6643a338d'
+    auth_token = '8941635712567907119d419cf183cd2e'
+
+    # Create a Twilio client
+    client = Client(account_sid, auth_token)
+
+    # Replace with your Twilio phone number
+    twilio_phone_number = '+19452073127'
+
+    # Compose the SMS message
+    message = f"Your verification code is: {verification_code}"
+
+    # Send the SMS message using Twilio
+    client.messages.create(
+        body=message,
+        from_=twilio_phone_number,
+        to=phone_number
+    )
+

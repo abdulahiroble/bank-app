@@ -3,6 +3,11 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+#SMS authentication credentials with Twilio
+TWILIO_ACCOUNT_SID = 'AC8c82b8ec978b729894050ad6643a338d'
+TWILIO_AUTH_TOKEN = '8941635712567907119d419cf183cd2e'
+TWILIO_PHONE_NUMBER = '+19452073127'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/

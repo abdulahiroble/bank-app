@@ -97,4 +97,7 @@ class TransferForm(forms.ModelForm):
         if amount < 0:
             raise forms.ValidationError("Amount cannot be negative.")
         return amount
-    
+
+
+class SMSVerificationForm(forms.Form):
+    phone_number = forms.CharField(max_length=20)
