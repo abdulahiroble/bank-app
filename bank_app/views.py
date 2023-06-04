@@ -221,7 +221,9 @@ class LogoutView(LogoutView):
 class LoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'registration/login.html'
-    success_url = reverse_lazy('bank_app:home')
+    
+    def get_success_url(self):
+        return reverse_lazy('bank_app:home')
     
     
 class RegisterView(CreateView):
@@ -280,53 +282,19 @@ class TransferCreateView(generics.CreateAPIView):
 class TransferDetailView(generics.RetrieveAPIView):
     queryset = Transfer.objects.all()
     serializer_class = TransferSerializer
-
-# class CreateTransferView(LoginRequiredMixin, CreateView):
-#     model = Transfer
-#     form_class = TransferForm
-#     template_name = 'bank_app/create_loan.html'
-#     success_url = reverse_lazy('bank_app:home')
-
-#     def get_form(self, form_class=None):
-#         form = super().get_form(form_class)
-#         account = self.request.user.customer
-#         accounts = Account.objects.filter(owner=account)
-#         form.fields['sender_account'].queryset = accounts
-#         return form
-
-#     def post(self, request):
-#         form = TransferForm(request.POST)
-#         if form.is_valid():
-#             sender_account = form.cleaned_data['sender_account']
-#             receiver_account = form.cleaned_data['receiver_account']
-#             amount = form.cleaned_data['amount']
-#              # Perform additional validation and business logic
-#             if sender_account.balance >= amount:
-#                 # Sufficient balance, proceed with the transfer
-#                 sender_account.balance -= amount
-#                 receiver_account.balance += amount
-#                 sender_account.save()
-#                 receiver_account.save()
-                
-#                 # Create and save the transfer record
-#                 transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
-#                 transfer.save()
-                
-#                 return redirect('bank_app:create_transfer')
-#             else:
-#                 # Insufficient balance, display an error message
-#                 form.add_error('amount', 'Insufficient balance for the transfer.')
-        
-#         return render(request, 'bank_app/create_transfer.html', {'form': form})
         
 class CreateTransferView(LoginRequiredMixin, View):
     form_class = TransferForm
     template_name = 'bank_app/create_transfer.html'
     success_url = reverse_lazy('bank_app:create_transfer')
-
+    
     def get(self, request):
         form = self.form_class()
+        account = request.user.customer
+        accounts = Account.objects.filter(owner=account)
+        form.fields['sender_account'].queryset = accounts
         return render(request, self.template_name, {'form': form})
+
 
     def post(self, request):
         form = self.form_class(request.POST)
