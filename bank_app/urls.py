@@ -12,6 +12,7 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     
     path('send-verification/', views.SMSVerificationView.as_view(), name='send_verification'),
+    path('verify-code/', views.VerifyCodeView.as_view(), name='verify_code'),
     
     path('accounts/', views.AccountListView.as_view(), name='account_list'),
     path('accounts/<int:pk>/', views.AccountDetailView.as_view(), name='account_details'),

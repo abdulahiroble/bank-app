@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Verification Code</h2>
+<form method="post" action="{% url 'bank_app:verify_code' %}">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="verification_code">Enter Verification Code:</label>
+    <input type="text" name="verification_code" id="verification_code" class="form-control">
+  </div>
+  <input type="submit" value="Verify" class="btn btn-primary">
+</form>
+{% endblock %}

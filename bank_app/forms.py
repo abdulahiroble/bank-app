@@ -101,3 +101,12 @@ class TransferForm(forms.ModelForm):
 
 class SMSVerificationForm(forms.Form):
     phone_number = forms.CharField(max_length=20)
+
+
+class VerifyCodeForm(forms.Form):
+    verification_code = forms.CharField(label='Verification Code', max_length=6)
+
+    def clean_verification_code(self):
+        verification_code = self.cleaned_data['verification_code']
+        # Add any additional validation logic here if needed
+        return verification_code

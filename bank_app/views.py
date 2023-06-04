@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 import requests
 
+from django.core.cache import cache
+
 from twilio.rest import Client
 
 from .models import Customer, Account, Loan, Transaction, Payment, Transfer
@@ -406,6 +408,8 @@ class SMSVerificationView(FormView):
         # Save the verification code in the session (or you can store it in the database)
         self.request.session['verification_code'] = verification_code
 
+        cache.set(f"verification_code:{phone_number}", verification_code)
+
         # Send the SMS verification code using Twilio
         send_sms_verification(phone_number, verification_code)
 
@@ -418,7 +422,7 @@ def generate_verification_code():
 def send_sms_verification(phone_number, verification_code):
     # Replace with your Twilio account SID and auth token
     account_sid = 'AC8c82b8ec978b729894050ad6643a338d'
-    auth_token = '8941635712567907119d419cf183cd2e'
+    auth_token = '13ef0b92865f81892769983b72b302c7'
 
     # Create a Twilio client
     client = Client(account_sid, auth_token)
@@ -436,3 +440,29 @@ def send_sms_verification(phone_number, verification_code):
         to=phone_number
     )
 
+class VerifyCodeView(View):
+    def get(self, request):
+        return render(request, 'bank_app/verify_code.html')
+
+    def post(self, request):
+        phone_number = request.POST.get('phone_number')
+        verification_code = request.POST.get('verification_code')
+
+        # Retrieve the stored verification code and message SID from cache
+        stored_verification_code = cache.get(f"verification_code:{phone_number}")
+        message_sid = cache.get(f"message_sid:{phone_number}")
+
+        if verification_code == stored_verification_code:
+          
+        
+
+            # Clear the verification code and message SID from cache
+            cache.delete(f"verification_code:{phone_number}")
+            cache.delete(f"message_sid:{phone_number}")
+
+            return redirect('bank_app:sms_verification')
+        else:
+            # Verification code does not match
+            messages.error(request, 'Invalid verification code.')
+
+        return redirect('bank_app:verify_code')
