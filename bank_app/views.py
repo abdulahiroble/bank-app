@@ -181,7 +181,7 @@ class MakePaymentView(LoginRequiredMixin, FormView):
     login_url = 'login'
     form_class = PaymentForm
     template_name = 'bank_app/make_payment.html'
-    success_url = reverse_lazy('bank_app:home')
+    success_url = reverse_lazy('bank_app:loan_list')
 
     def form_valid(self, form):
         loan_id = self.kwargs['pk']
