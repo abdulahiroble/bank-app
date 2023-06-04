@@ -42,7 +42,7 @@ class Transaction(models.Model):
         return f"{self.transaction_type} {self.amount} on {self.date} for {self.account}"
 
 class Payment(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=None)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=None, null=True)
     loan = models.ForeignKey('Loan', on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
