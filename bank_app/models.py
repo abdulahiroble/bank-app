@@ -26,24 +26,6 @@ class Account(models.Model):
     def __str__(self):
         return self.IBAN
 
-    
-class Loan(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=None)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, default=None)
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
-    duration = models.PositiveIntegerField(help_text="Duration in months")
-    interest_rate = models.DecimalField(max_digits=4, decimal_places=2, help_text="In percentage %")
-    start_date = models.DateField(default=timezone.now, null=True)
-    term_in_years = models.PositiveIntegerField(help_text="Loan term in years")
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-
-    def __str__(self):
-        return f"{self.customer}'s loan ({self.amount}$)"
-
-
-    def __str__(self):
-        return f"{self.customer}'s loan ({self.amount}$)"
-
 class Transaction(models.Model):
     TRANSACTION_TYPES = (
         ('D', 'Deposit'),
@@ -68,6 +50,23 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment #{self.pk} - Loan: {self.loan}, Amount: {self.amount}"
     
+class Loan(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, default=None)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, default=None)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    duration = models.PositiveIntegerField(help_text="Duration in months")
+    interest_rate = models.DecimalField(max_digits=4, decimal_places=2, help_text="In percentage %")
+    start_date = models.DateField(default=timezone.now, null=True)
+    term_in_years = models.PositiveIntegerField(help_text="Loan term in years")
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+
+    def __str__(self):
+        return f"{self.customer}'s loan ({self.amount}$)"
+
+
+    def __str__(self):
+        return f"{self.customer}'s loan ({self.amount}$)"
+
 
 class Transfer(models.Model):
     sender_account = models.ForeignKey(Account, related_name='outgoing_transfers', on_delete=models.CASCADE)

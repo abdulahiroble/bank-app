@@ -270,35 +270,43 @@ class TransferDetailView(generics.RetrieveAPIView):
     queryset = Transfer.objects.all()
     serializer_class = TransferSerializer
 
-class CreateTransferView(View):
-    def get(self, request):
-        form = TransferForm()
-        return render(request, 'bank_app/create_transfer.html', {'form': form})
-    
-    def post(self, request):
-        form = TransferForm(request.POST)
-        if form.is_valid():
-            sender_account = form.cleaned_data['sender']
-            receiver_account = form.cleaned_data['recipient']
-            amount = form.cleaned_data['amount']
-             # Perform additional validation and business logic
-            if sender_account.balance >= amount:
-                # Sufficient balance, proceed with the transfer
-                sender_account.balance -= amount
-                receiver_account.balance += amount
-                sender_account.save()
-                receiver_account.save()
+class CreateTransferView(LoginRequiredMixin, CreateView):
+    model = Transfer
+    form_class = TransferForm
+    template_name = 'bank_app/create_loan.html'
+    success_url = reverse_lazy('bank_app:home')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        account = self.request.user.customer
+        accounts = Account.objects.filter(owner=account)
+        form.fields['sender_account'].queryset = accounts
+        return form
+
+    # def post(self, request):
+    #     form = TransferForm(request.POST)
+    #     if form.is_valid():
+    #         sender_account = form.cleaned_data['sender']
+    #         receiver_account = form.cleaned_data['recipient']
+    #         amount = form.cleaned_data['amount']
+    #          # Perform additional validation and business logic
+    #         if sender_account.balance >= amount:
+    #             # Sufficient balance, proceed with the transfer
+    #             sender_account.balance -= amount
+    #             receiver_account.balance += amount
+    #             sender_account.save()
+    #             receiver_account.save()
                 
-                # Create and save the transfer record
-                transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
-                transfer.save()
+    #             # Create and save the transfer record
+    #             transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
+    #             transfer.save()
                 
-                return redirect('bank_app:create_transfer')
-            else:
-                # Insufficient balance, display an error message
-                form.add_error('amount', 'Insufficient balance for the transfer.')
+    #             return redirect('bank_app:create_transfer')
+    #         else:
+    #             # Insufficient balance, display an error message
+    #             form.add_error('amount', 'Insufficient balance for the transfer.')
         
-        return render(request, 'bank_app/create_transfer.html', {'form': form})
+    #     return render(request, 'bank_app/create_transfer.html', {'form': form})
         
 
 
