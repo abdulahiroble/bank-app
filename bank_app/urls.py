@@ -30,8 +30,8 @@ urlpatterns = [
     path('transfers/create/', views.CreateTransferView.as_view(), name='create_transfer'),
     path('transfers/<int:pk>/', views.TransferDetailView.as_view(), name='transfer_details'),
 
-    # path('api/transfers/', views.TransferCreateView.as_view(), name='create_transfer'),
-    # path('api/transfers/<int:pk>/', views.TransferDetailView.as_view(), name='transfer_detail'),
+    path('api/transfers/', views.TransferCreateView.as_view(), name='create_transfer2'),
+    path('api/transfers/<int:pk>/', views.TransferDetailView.as_view(), name='transfer_detail'),
 
     path('api/loans/', LoanListAPIView.as_view(), name='loan-list'),
     

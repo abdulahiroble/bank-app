@@ -84,13 +84,13 @@ class PaymentForm(forms.ModelForm):
     
 
 class TransferForm(forms.ModelForm):
-    sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')
-    recipient = forms.ModelChoiceField(queryset=Account.objects.all(), label='Recipient')
-    amount = forms.DecimalField(min_value=0)
+    # sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')
+    # recipient = forms.ModelChoiceField(queryset=Account.objects.all(), label='Recipient')
+    # amount = forms.DecimalField(min_value=0)
 
     class Meta:
         model = Transfer
-        fields = ['sender', 'recipient', 'amount']
+        fields = ['sender_account', 'receiver_account', 'amount']
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
