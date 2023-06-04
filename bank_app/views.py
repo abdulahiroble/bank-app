@@ -283,30 +283,30 @@ class CreateTransferView(LoginRequiredMixin, CreateView):
         form.fields['sender_account'].queryset = accounts
         return form
 
-    # def post(self, request):
-    #     form = TransferForm(request.POST)
-    #     if form.is_valid():
-    #         sender_account = form.cleaned_data['sender']
-    #         receiver_account = form.cleaned_data['recipient']
-    #         amount = form.cleaned_data['amount']
-    #          # Perform additional validation and business logic
-    #         if sender_account.balance >= amount:
-    #             # Sufficient balance, proceed with the transfer
-    #             sender_account.balance -= amount
-    #             receiver_account.balance += amount
-    #             sender_account.save()
-    #             receiver_account.save()
+    def post(self, request):
+        form = TransferForm(request.POST)
+        if form.is_valid():
+            sender_account = form.cleaned_data['sender_account']
+            receiver_account = form.cleaned_data['receiver_account']
+            amount = form.cleaned_data['amount']
+             # Perform additional validation and business logic
+            if sender_account.balance >= amount:
+                # Sufficient balance, proceed with the transfer
+                sender_account.balance -= amount
+                receiver_account.balance += amount
+                sender_account.save()
+                receiver_account.save()
                 
-    #             # Create and save the transfer record
-    #             transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
-    #             transfer.save()
+                # Create and save the transfer record
+                transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
+                transfer.save()
                 
-    #             return redirect('bank_app:create_transfer')
-    #         else:
-    #             # Insufficient balance, display an error message
-    #             form.add_error('amount', 'Insufficient balance for the transfer.')
+                return redirect('bank_app:create_transfer')
+            else:
+                # Insufficient balance, display an error message
+                form.add_error('amount', 'Insufficient balance for the transfer.')
         
-    #     return render(request, 'bank_app/create_transfer.html', {'form': form})
+        return render(request, 'bank_app/create_transfer.html', {'form': form})
         
 
 
