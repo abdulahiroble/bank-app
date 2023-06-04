@@ -6,6 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('bank_app.urls')),
     path('api/', include_docs_urls(title='APIs')),
-    path('api/accounts/', include('bank_app.urls')),  # Assuming you have account-related APIs in 'bank_app.urls'
+    path('api/accounts/', include('bank_app.urls')),
     path('api/loans/', include('bank_app.urls')),  
 ]

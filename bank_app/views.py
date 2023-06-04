@@ -217,7 +217,9 @@ class LogoutView(LogoutView):
 class LoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'registration/login.html'
-    success_url = reverse_lazy('bank_app:home')
+    
+    def get_success_url(self):
+        return reverse_lazy('bank_app:home')
     
     
 class RegisterView(CreateView):
