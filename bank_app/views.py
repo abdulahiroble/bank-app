@@ -13,6 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 import requests
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 from dotenv import load_dotenv
 
@@ -118,6 +120,11 @@ class ChangeCustomerRankView(LoginRequiredMixin, View):
 class AccountListView(LoginRequiredMixin, View):
     login_url = 'login'
 
+    @method_decorator(cache_page(60 * 5))  # Cache the page for 5 minutes
+    @method_decorator(vary_on_headers('Cookie'))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
     def get(self, request):
         accounts = Account.objects.all()
         return render(request, 'bank_app/account_list.html', {'accounts': accounts})
