@@ -73,3 +73,4 @@ class Transfer(models.Model):
     receiver_account = models.ForeignKey(Account, related_name='incoming_transfers', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
+    transaction_id = models.CharField(max_length=100, unique=True, null=True)

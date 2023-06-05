@@ -1,6 +1,7 @@
 import json
 import os
 import random
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
@@ -299,24 +300,27 @@ class CreateTransferView(LoginRequiredMixin, View):
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
+            transaction_id = form.cleaned_data['transaction_id']
             sender_account = form.cleaned_data['sender_account']
             receiver_account = form.cleaned_data['receiver_account']
             amount = form.cleaned_data['amount']
             
-            # Perform additional validation and business logic
+            if Transfer.objects.filter(transaction_id=transaction_id).exists():
+                    return HttpResponse("Transfer request already processed.", status=200)
+            
             if sender_account.balance >= amount:
-                # Sufficient balance, proceed with the transfer
                 sender_account.balance -= amount
                 receiver_account.balance += amount
                 sender_account.save()
                 receiver_account.save()
                 
                 # Create and save the transfer record
-                transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount)
+                transfer = Transfer(sender_account=sender_account, receiver_account=receiver_account, amount=amount, transaction_id=transaction_id)
                 transfer.save()
                 
                 # Serialize the transfer data
                 payload = {
+                    'transaction_id': transaction_id,
                     'sender_account': sender_account.id,
                     'receiver_account': receiver_account.id,
                     'amount': str(amount),

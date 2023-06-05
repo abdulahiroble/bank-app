@@ -87,6 +87,7 @@ class TransferForm(forms.ModelForm):
     # sender = forms.ModelChoiceField(queryset=Account.objects.all(), label='Sender')
     # recipient = forms.ModelChoiceField(queryset=Account.objects.all(), label='Recipient')
     # amount = forms.DecimalField(min_value=0)
+    transaction_id = forms.CharField(max_length=100)
 
     class Meta:
         model = Transfer
