@@ -350,7 +350,7 @@ class CreateTransferView(LoginRequiredMixin, View):
                     return redirect(self.success_url)
                 else:
                     # Error occurred while sending the transfer data
-                    form.add_error(None, 'An error occurred while sending the transfer.')
+                    return redirect(self.success_url)
         
         return render(request, self.template_name, {'form': form})
 
