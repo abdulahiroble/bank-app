@@ -46,6 +46,12 @@ from .models import Loan
 from .serializers import LoanSerializer, AccountSerializer, TransferSerializer
 from bank_app import serializers
 
+## token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 load_dotenv()
 
 class IndexView(TemplateView):
@@ -120,10 +126,10 @@ class ChangeCustomerRankView(LoginRequiredMixin, View):
 class AccountListView(LoginRequiredMixin, View):
     login_url = 'login'
 
-    @method_decorator(cache_page(60 * 5))  # Cache the page for 5 minutes
-    @method_decorator(vary_on_headers('Cookie'))
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+    # @method_decorator(cache_page(60 * 5))  # Cache the page for 5 minutes
+    # @method_decorator(vary_on_headers('Cookie'))
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super().dispatch(request, *args, **kwargs)
     
     def get(self, request):
         accounts = Account.objects.all()
@@ -352,22 +358,25 @@ class CreateTransferView(LoginRequiredMixin, View):
 class TransferCreateView(generics.CreateAPIView):
     queryset = Transfer.objects.all()
     serializer_class = TransferSerializer
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         sender_account = serializer.validated_data['sender_account']
         receiver_account = serializer.validated_data['receiver_account']
         amount = serializer.validated_data['amount']
 
-        # if sender_account.balance < amount:
-        #     raise serializers.ValidationError("Insufficient funds.")
+        if sender_account.balance < amount:
+            raise serializers.ValidationError("Insufficient funds.")
 
-        # sender_account.balance -= amount
-        # sender_account.save()
+        sender_account.balance -= amount
+        sender_account.save()
 
-        # receiver_account.balance += amount
-        # receiver_account.save()
+        receiver_account.balance += amount
+        receiver_account.save()
 
-        # serializer.save()
+        serializer.save()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -375,6 +384,12 @@ class TransferCreateView(generics.CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({'token': token.key})
     
 class SMSVerificationView(FormView):
     form_class = SMSVerificationForm

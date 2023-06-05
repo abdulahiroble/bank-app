@@ -43,4 +43,6 @@ urlpatterns = [
     path('api/accounts/<int:pk>/', RetrieveAccountAPIView.as_view(), name='retrieve-account'),
     path('api/accounts/<int:pk>/update/', UpdateAccountAPIView.as_view(), name='update-account'),
     path('api/accounts/<int:pk>/delete/', DeleteAccountAPIView.as_view(), name='delete-account'),
+    
+    path('api/token/', views.CustomAuthToken.as_view(), name='api_token'),
 ]
