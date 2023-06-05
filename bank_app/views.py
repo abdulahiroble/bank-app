@@ -23,7 +23,7 @@ from django.core.cache import cache
 from twilio.rest import Client
 
 from .models import Customer, Account, Loan, Transaction, Payment, Transfer
-from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm, SMSVerificationForm, TransferForm
+from .forms import CustomerForm, AccountForm, LoanForm, PaymentForm, SMSVerificationForm, TransferForm, VerifyCodeForm
 
 from django.views.generic import TemplateView, ListView
 
@@ -439,16 +439,17 @@ def send_sms_verification(phone_number, verification_code):
     )
 
 class VerifyCodeView(View):
+ 
     def get(self, request):
         return render(request, 'bank_app/verify_code.html')
 
     def post(self, request):
-        phone_number = request.POST.get('phone_number')
+        
+        
         verification_code = request.POST.get('verification_code')
 
         # Retrieve the stored verification code and message SID from cache
         stored_verification_code = self.request.session['verification_code']
-        message_sid = cache.get(f"message_sid:{phone_number}")
 
         print("SMS Code:   " + str(stored_verification_code))
         print("User input: " + verification_code)
@@ -456,15 +457,14 @@ class VerifyCodeView(View):
         if verification_code == str(stored_verification_code):
           
             print("Verification code matches")
+            messages.success(request, 'Verification code matched successfully.')
+            self.request.session['verification_code'] = 000000
+            return render(request, 'bank_app/verify_code.html')
 
-            # Clear the verification code and message SID from cache
-            cache.delete(f"verification_code:{phone_number}")
-            cache.delete(f"message_sid:{phone_number}")
-
-            return redirect('bank_app:send_verification')
         else:
-            # Verification code does not match
+            
             print("Verification code does not match")
             messages.error(request, 'Invalid verification code.')
 
-        return redirect('bank_app:verify_code')
+            return render(request, 'bank_app/verify_code.html')
+
