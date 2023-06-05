@@ -196,6 +196,13 @@ class MakePaymentView(LoginRequiredMixin, FormView):
     form_class = PaymentForm
     template_name = 'bank_app/make_payment.html'
     success_url = reverse_lazy('bank_app:loan_list')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        account = self.request.user.customer
+        accounts = Account.objects.filter(owner=account)
+        form.fields['account'].queryset = accounts
+        return form
 
     def form_valid(self, form):
         loan_id = self.kwargs['pk']
